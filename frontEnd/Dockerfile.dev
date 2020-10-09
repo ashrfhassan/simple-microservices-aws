@@ -1,0 +1,12 @@
+FROM node:12-alpine
+
+COPY ./package.json /usr/service/package.json
+COPY ./yarn.lock /usr/service/yarn.lock
+
+WORKDIR /usr/service
+
+RUN yarn
+
+COPY . /usr/service
+
+CMD yarn start

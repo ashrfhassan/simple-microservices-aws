@@ -1,0 +1,26 @@
+FROM jboss/keycloak:10.0.2
+
+#receiving ARG, used in building docker phase
+ARG HOST=localhost
+ARG PORT=5432
+ARG KEYCLOAK_DB=keycloak
+ARG KEYCLOAK_DB_USER=keycloak-db_user
+ARG KEYCLOAK_DB_PASSWORD=keycloak_db_password
+ARG KEYCLOAK_USER=keycloak_user
+ARG KEYCLOAK_PASSWORD=keycloak_password
+
+#environment variables
+ENV DB_VENDOR POSTGRES
+ENV DB_ADDR $HOST
+ENV DB_PORT $PORT
+ENV DB_DATABASE $KEYCLOAK_DB
+ENV DB_USER $KEYCLOAK_DB_USER
+ENV DB_PASSWORD $KEYCLOAK_DB_PASSWORD
+ENV KEYCLOAK_USER $KEYCLOAK_USER
+ENV KEYCLOAK_PASSWORD $KEYCLOAK_PASSWORD
+
+#expose keycloak port
+EXPOSE 8080
+
+CMD keycloak
+

@@ -1,0 +1,41 @@
+.App {
+  text-align: center;
+  background-color: #282c34;
+  min-height: 100vh;
+  font-size: calc(10px + 1vmin);
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 10vmin;
+  pointer-events: none;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.chat, .users{
+  min-height: 60vh;
+  margin: 3px;
+  border-width: 1px;
+  border-radius: 2px;
+  background-color: white;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 60vh;
+}
+
+h3{
+color: white;
+}
+
+.user-card:hover{
+background-color: grey;
+  cursor: pointer;
+}

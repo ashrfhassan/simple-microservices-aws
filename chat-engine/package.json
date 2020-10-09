@@ -1,0 +1,16 @@
+{
+  "name": "chat-engine",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "amqplib": "^0.5.3",
+    "socket.io": "^2.3.0"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "start:dev": "nodemon --watch src -L src/app.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

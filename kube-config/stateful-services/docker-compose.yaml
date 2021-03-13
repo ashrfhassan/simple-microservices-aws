@@ -1,0 +1,103 @@
+version: '3'
+services:
+  #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+  # message broker between services
+  #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+  amqp:
+    image: rabbitmq:3.8.4
+    container_name: rabbitmq_container
+    hostname: amqp
+    volumes:
+      - 'rabbitmq-data:/var/lib/rabbitmq/'
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: root
+# hashing ports for security to not expose message broker to public network
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+  #######################################
+  # mongodb used for chat saving
+  #######################################
+  mongodb:
+    image: 'mongo:4.2.1-bionic'
+    container_name: mongodbdb_container
+    hostname: mongodb
+    volumes:
+      - 'mongodb-volume:/data/db'
+# ports are not hashed for development purposes only but, not exposed on production
+    ports:
+      - '27017:27017'
+    restart: always
+  #######################################
+  # mysql db used for users
+  #######################################
+  mysql:
+    image: 'mysql:5.6'
+    container_name: mysqldb_container
+    hostname: mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASS: root
+    entrypoint:
+      sh -c
+      " echo 'CREATE DATABASE IF NOT EXISTS users;
+      CREATE DATABASE IF NOT EXISTS auth_users;'
+      > /docker-entrypoint-initdb.d/init.sql;
+      /usr/local/bin/docker-entrypoint.sh --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci "
+    volumes:
+      - 'mysqldb-volume:/var/lib/mysql'
+# ports are not hashed for development purposes only but, not exposed on production
+    ports:
+      - '3306:3306'
+    restart: always
+  #######################################
+  # kong database
+  #######################################
+  kong-db:
+    container_name: kong-db_container
+    image: postgres:9.6
+    hostname: kong-db
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong_db_user
+      POSTGRES_PASSWORD: kong_db_password
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong_db_user", "-d", "kong"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    restart: always
+    stdin_open: true
+    tty: true
+    volumes:
+      - kong_data:/var/lib/postgresql/data
+    ports:
+      - '5431:5432'
+
+  keycloak-db:
+    image: postgres:9.6
+    container_name: keycloak-db_container
+    hostname: keycloak-db
+    volumes:
+      - keycloak-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB:       keycloak
+      POSTGRES_USER:     keycloak_db_user
+      POSTGRES_PASSWORD: keycloak_db_password
+volumes:
+  mongodb-volume:
+  mysqldb-volume:
+  kong_data:
+  keycloak-data:
+  rabbitmq-data:

@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "authentication-service.fullname" . }}
+  labels:
+    {{- include "authentication-service.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "authentication-service.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "authentication-service.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "authentication-service.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8574
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: RABBITMQ
+            value: {{ .Values.RABBITMQ | quote }}
+          - name: NODE_ENV
+            value: {{ .Values.NODE_ENV | quote }}
+          - name: PORT
+            value: {{ .Values.PORT | quote }}
+          - name: DB_CONNECTION
+            value: {{ .Values.DB_CONNECTION | quote }}
+          - name: DB_HOST
+            value: {{ .Values.DB_HOST | quote }}
+          - name: DB_PORT
+            value: {{ .Values.DB_PORT | quote }}
+          - name: DB_DATABASE
+            value: {{ .Values.DB_DATABASE | quote }} 
+          - name: DB_USERNAME
+            value: {{ .Values.DB_USERNAME | quote }}
+          - name: DB_PASSWORD
+            value: {{ .Values.DB_PASSWORD | quote }}
+          - name: AUTH_WEBSERVER_URL
+            value: {{ .Values.AUTH_WEBSERVER_URL | quote }}
+          - name: AUTH_GATEWAY_URL
+            value: {{ .Values.AUTH_GATEWAY_URL | quote }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

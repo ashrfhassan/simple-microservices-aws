@@ -17,7 +17,7 @@ services:
 #      - '5672:5672'
 #      - '15672:15672'
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      test: rabbitmq-diagnostics -q ping
       interval: 30s
       timeout: 10s
       retries: 5

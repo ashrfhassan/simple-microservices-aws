@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "chat-engine.fullname" . }}
+  name: {{ include "konga.fullname" . }}
   labels:
-    {{- include "chat-engine.labels" . | nindent 4 }}
+    {{- include "konga.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: 3000
+      targetPort: 1337
       protocol: TCP
       name: http
   selector:
-    {{- include "chat-engine.selectorLabels" . | nindent 4 }}
+    {{- include "konga.selectorLabels" . | nindent 4 }}

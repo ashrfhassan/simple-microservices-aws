@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8585
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -47,6 +47,21 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: STATEFULSET_HOST
+            value: {{ .Values.STATEFULSET_HOST | quote }}
+          - name: NODE_ENV
+            value: {{ .Values.NODE_ENV | quote }}
+          - name: PORT
+            value: {{ .Values.PORT | quote }}
+          - name: RABBITMQ_DEFAULT_USER
+            value: {{ .Values.RABBITMQ_DEFAULT_USER | quote }}
+          - name: RABBITMQ_DEFAULT_PASS
+            value: {{ .Values.RABBITMQ_DEFAULT_PASS | quote }}
+          - name: RABBITMQ_URI
+            value: {{ .Values.RABBITMQ_URI | quote }}
+          - name: MONGODB_URI
+            value: {{ .Values.MONGODB_URI | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

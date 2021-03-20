@@ -48,8 +48,8 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-          - name: RABBITMQ
-            value: {{ .Values.RABBITMQ | quote }}
+          - name: STATEFULSET_HOST
+            value: {{ .Values.STATEFULSET_HOST | quote }}
           - name: NODE_ENV
             value: {{ .Values.NODE_ENV | quote }}
           - name: PORT
@@ -66,10 +66,10 @@ spec:
             value: {{ .Values.DB_USERNAME | quote }}
           - name: DB_PASSWORD
             value: {{ .Values.DB_PASSWORD | quote }}
-          - name: AUTH_WEBSERVER_URL
-            value: {{ .Values.AUTH_WEBSERVER_URL | quote }}
-          - name: AUTH_GATEWAY_URL
-            value: {{ .Values.AUTH_GATEWAY_URL | quote }}
+          - name: USERS_WEBSERVER_URL
+            value: {{ .Values.USERS_WEBSERVER_URL | quote }}
+          - name: KONG_ADMIN_URL
+            value: {{ .Values.KONG_ADMIN_URL | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

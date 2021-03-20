@@ -81,23 +81,51 @@ services:
     volumes:
       - kong_data:/var/lib/postgresql/data
     ports:
-      - '5431:5432'
-
-  keycloak-db:
-    image: postgres:9.6
-    container_name: keycloak-db_container
-    hostname: keycloak-db
-    volumes:
-      - keycloak-data:/var/lib/postgresql/data
-    ports:
       - '5432:5432'
+  #######################################
+  # kong database migration
+  #######################################
+  kong-migrations:
+    image: kong:2.0.4-ubuntu
+    container_name: kong-migrations_container
+    command: kong migrations bootstrap
+    depends_on:
+      - kong-db
     environment:
-      POSTGRES_DB:       keycloak
-      POSTGRES_USER:     keycloak_db_user
-      POSTGRES_PASSWORD: keycloak_db_password
+      KONG_DATABASE: postgres
+      KONG_PG_DATABASE: kong
+      KONG_PG_HOST: kong-db
+      KONG_PG_USER: kong_db_user
+      KONG_PG_PASSWORD: kong_db_password
+    restart: on-failure
+  #######################################
+  # kong database migration up
+  #######################################
+  kong-migrations-up:
+    image: kong:2.0.4-ubuntu
+    container_name: kong-migrations-up_container
+    command: kong migrations up && kong migrations finish
+    depends_on:
+      - kong-db
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_DATABASE: kong
+      KONG_PG_HOST: kong-db
+      KONG_PG_USER: kong_db_user
+      KONG_PG_PASSWORD: kong_db_password
+    restart: on-failure
+  #######################################
+  # konga (kong GUI Admin service kong apis cli) preparation
+  #######################################
+  konga-prepare:
+    image: pantsel/konga:latest
+    container_name: konga-prepare_container
+    command: "-c prepare -a postgres -u postgresql://kong_db_user:kong_db_password@kong-db:5432/konga"
+    restart: on-failure
+    depends_on:
+      - kong-db
 volumes:
   mongodb-volume:
   mysqldb-volume:
   kong_data:
-  keycloak-data:
   rabbitmq-data:

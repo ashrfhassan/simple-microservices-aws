@@ -9,7 +9,7 @@ RUN yarn
 
 COPY . /usr/service
 
-ENV RABBITMQ localhost
+ENV STATEFULSET_HOST localhost
 ENV NODE_ENV production
 ENV PORT 8585
 ENV RABBITMQ_DEFAULT_USER root
@@ -23,4 +23,4 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 EXPOSE 8585
-CMD dockerize -wait tcp://${RABBITMQ}:5672 -timeout 60m yarn start
+CMD dockerize -wait tcp://${STATEFULSET_HOST}:5672 -timeout 60m yarn start

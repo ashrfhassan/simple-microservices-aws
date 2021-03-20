@@ -1,16 +1,16 @@
-# Default values for chat-engine.
+# Default values for konga.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: 192.168.1.23:9000/chat-engine
+  repository: pantsel/konga
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
-imagePullSecrets: [{name: secret1}]
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -38,7 +38,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 3000
+  port: 1337
 
 ingress:
   enabled: true
@@ -48,7 +48,7 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: 'ash-kube.com'
-      paths: [{path: '/socket.io'}]
+      paths: [{path: '/konga'}]
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -79,10 +79,12 @@ tolerations: []
 
 affinity: {}
 
+
 #env variables
-STATEFULSET_HOST: 192.168.1.22
-NODE_ENV: production
-SOCKET_IO_PORT: 3000
-RABBITMQ_DEFAULT_USER: root
-RABBITMQ_DEFAULT_PASS: root
-RABBITMQ_URI: amqp://root:root@192.168.1.22:5672
+DB_ADAPTER: postgres
+DB_HOST: 192.168.1.22
+DB_DATABASE: konga
+DB_USER: kong_db_user
+DB_PASSWORD: kong_db_password
+TOKEN_SECRET: km1GUr4RkcQD7DewhJPNXrCuZwcKmqjb
+NODE_ENV: development

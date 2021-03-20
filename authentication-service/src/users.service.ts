@@ -26,7 +26,7 @@ export class UsersService {
             let {password, ...result}: any = user;
             //user service create http call
             try {
-                const results = await this.httpService.post(`${process.env.AUTH_WEBSERVER_URL}/users/add`, {
+                const results = await this.httpService.post(`${process.env.USERS_WEBSERVER_URL}/users/add`, {
                     id: user.id.toString(), name, email, address, bootstrapColor
                 }).toPromise();
                 if(results.status !== 200){
@@ -40,24 +40,24 @@ export class UsersService {
             //kong http call, for secure api_gateway requests
             // creating kong consumer
             try {
-                const results = await this.httpService.post(`${process.env.AUTH_GATEWAY_URL}/consumers`, {
+                const results = await this.httpService.post(`${process.env.KONG_ADMIN_URL}/consumers`, {
                     username: user.name, custom_id: user.id.toString()
                 }).toPromise();
                 if(results.status !== 201){
                     await this.usersRepository.delete(user);
-                    await this.httpService.post(`${process.env.AUTH_WEBSERVER_URL}/users/delete`, {email: user.email}).toPromise();
+                    await this.httpService.post(`${process.env.USERS_WEBSERVER_URL}/users/delete`, {email: user.email}).toPromise();
                     return {errors:['create user consumer failed']};
                 }
             }catch (e) {
                 await this.usersRepository.delete(user);
-                await this.httpService.post(`${process.env.AUTH_WEBSERVER_URL}/users/delete`, {email: user.email}).toPromise();
+                await this.httpService.post(`${process.env.USERS_WEBSERVER_URL}/users/delete`, {email: user.email}).toPromise();
                 return {errors:['couldn\'t create user consumer']};
             }
             //creating kong consumer jwt token
             let token: string;
             try {
-                const results: any = await this.httpService.post(`${process.env.AUTH_GATEWAY_URL}/consumers/${user.name}/jwt`).toPromise();
-                token = sign({iss: results.data.key}, results.data.secret, {algorithm: results.data.algorithm, expiresIn: 60 * 60 * 2});
+                const results: any = await this.httpService.post(`${process.env.KONG_ADMIN_URL}/consumers/${user.name}/jwt`).toPromise();
+                token = sign({iss: results.data.key, data: user}, results.data.secret, {algorithm: results.data.algorithm, expiresIn: 60 * 60 * 2});
             }catch (e) {
                 return {errors:['couldn\'t create user jwt']};
             }
@@ -77,8 +77,8 @@ export class UsersService {
             //creating kong consumer jwt token
             let token: string;
             try {
-                const results: any = await this.httpService.post(`${process.env.AUTH_GATEWAY_URL}/consumers/${user.name}/jwt`).toPromise();
-                token = sign({iss: results.data.key}, results.data.secret, {algorithm: results.data.algorithm, expiresIn: 60 * 60 * 2});
+                const results: any = await this.httpService.post(`${process.env.KONG_ADMIN_URL}/consumers/${user.name}/jwt`).toPromise();
+                token = sign({iss: results.data.key, data: user}, results.data.secret, {algorithm: results.data.algorithm, expiresIn: 60 * 60 * 2});
             }catch (e) {
                 return {errors:['couldn\'t create user jwt']};
             }

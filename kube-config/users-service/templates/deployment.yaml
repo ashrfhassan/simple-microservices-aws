@@ -47,6 +47,39 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: APP_NAME
+            value: {{ .Values.APP_NAME | quote }}
+          - name: APP_ENV
+            value: {{ .Values.APP_ENV | quote }}
+          - name: APP_KEY
+            value: {{ .Values.APP_KEY | quote }}
+          - name: APP_DEBUG
+            value: {{ .Values.APP_DEBUG | quote }}
+          - name: APP_URL
+            value: {{ .Values.APP_URL | quote }}
+          - name: APP_TIMEZONE
+            value: {{ .Values.APP_TIMEZONE | quote }}
+          - name: LOG_CHANNEL
+            value: {{ .Values.LOG_CHANNEL | quote }}
+          - name: LOG_SLACK_WEBHOOK_URL
+            value: {{ .Values.LOG_SLACK_WEBHOOK_URL | quote }}
+          - name: CACHE_DRIVER
+            value: {{ .Values.CACHE_DRIVER | quote }}
+          - name: QUEUE_CONNECTION
+            value: {{ .Values.QUEUE_CONNECTION | quote }}
+          - name: DB_CONNECTION
+            value: {{ .Values.DB_CONNECTION | quote }}
+          - name: DB_HOST
+            value: {{ .Values.DB_HOST | quote }}
+          - name: DB_PORT
+            value: {{ .Values.DB_PORT | quote }}
+          - name: DB_DATABASE
+            value: {{ .Values.DB_DATABASE | quote }}
+          - name: DB_USERNAME
+            value: {{ .Values.DB_USERNAME | quote }}
+          - name: DB_PASSWORD
+            value: {{ .Values.DB_PASSWORD | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

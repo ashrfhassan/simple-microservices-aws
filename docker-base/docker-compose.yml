@@ -347,7 +347,7 @@ services:
       - chat-proxy
     restart: always
   #######################################
-  # keyCloak for authentication/authorization
+  # keyCloak db for authentication/authorization (unused)
   #######################################
   keycloak-db:
     image: postgres:9.6
@@ -404,8 +404,8 @@ services:
       - 'DB_DATABASE=${AUTH_DB_DATABASE}'
       - 'DB_USERNAME=${DB_USERNAME}'
       - 'DB_PASSWORD=${DB_PASSWORD}'
-      - 'AUTH_WEBSERVER_URL=${AUTH_WEBSERVER_URL}'
-      - 'AUTH_GATEWAY_URL=${AUTH_GATEWAY_URL}'
+      - 'USERS_WEBSERVER_URL=${USERS_WEBSERVER_URL}'
+      - 'KONG_ADMIN_URL=${KONG_ADMIN_URL}'
     depends_on:
       - amqp
       - mysql

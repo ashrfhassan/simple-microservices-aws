@@ -6,11 +6,11 @@ replicaCount: 1
 
 image:
   repository: 192.168.1.23:9000/chat-db-interactions
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "latest"
 
-imagePullSecrets: []
+imagePullSecrets: [{name: secret1}]
 nameOverride: ""
 fullnameOverride: ""
 
@@ -21,7 +21,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: ""
+  name: "ash"
 
 podAnnotations: {}
 
@@ -38,16 +38,17 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8585
 
 ingress:
-  enabled: false
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
+  enabled: true
+  annotations:
+    konghq.com/strip-path: "true"
+    kubernetes.io/ingress.class: kong
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: chart-example.local
-      paths: []
+    - host: 'ash-kube.com'
+      paths: [{path: '/chat-db/api'}]
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -77,3 +78,12 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+#env variables
+STATEFULSET_HOST: 192.168.1.22
+NODE_ENV: production
+PORT: 8585
+RABBITMQ_DEFAULT_USER: root
+RABBITMQ_DEFAULT_PASS: root
+RABBITMQ_URI: amqp://root:root@192.168.1.22:5672
+MONGODB_URI: mongodb://192.168.1.22/chat

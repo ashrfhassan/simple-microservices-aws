@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "chat-engine.fullname" . }}
+  name: {{ include "konga.fullname" . }}
   labels:
-    {{- include "chat-engine.labels" . | nindent 4 }}
+    {{- include "konga.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "chat-engine.selectorLabels" . | nindent 6 }}
+      {{- include "konga.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "chat-engine.selectorLabels" . | nindent 8 }}
+        {{- include "konga.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "chat-engine.serviceAccountName" . }}
+      serviceAccountName: {{ include "konga.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 3000
+              containerPort: 1337
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -48,18 +48,20 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-          - name: STATEFULSET_HOST
-            value: {{ .Values.STATEFULSET_HOST | quote }}
+          - name: DB_ADAPTER
+            value: {{ .Values.DB_ADAPTER | quote }}
+          - name: DB_HOST
+            value: {{ .Values.DB_HOST | quote }}
+          - name: DB_DATABASE
+            value: {{ .Values.DB_DATABASE | quote }}
+          - name: DB_USER
+            value: {{ .Values.DB_USER | quote }}
+          - name: DB_PASSWORD
+            value: {{ .Values.DB_PASSWORD | quote }}
+          - name: TOKEN_SECRET
+            value: {{ .Values.TOKEN_SECRET | quote }}
           - name: NODE_ENV
             value: {{ .Values.NODE_ENV | quote }}
-          - name: SOCKET_IO_PORT
-            value: {{ .Values.SOCKET_IO_PORT | quote }}
-          - name: RABBITMQ_DEFAULT_USER
-            value: {{ .Values.RABBITMQ_DEFAULT_USER | quote }}
-          - name: RABBITMQ_DEFAULT_PASS
-            value: {{ .Values.RABBITMQ_DEFAULT_PASS | quote }}
-          - name: RABBITMQ_URI
-            value: {{ .Values.RABBITMQ_URI | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

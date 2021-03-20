@@ -80,7 +80,7 @@ tolerations: []
 affinity: {}
 
 #env variables
-RABBITMQ: 192.168.1.22
+STATEFULSET_HOST: 192.168.1.22
 NODE_ENV: production
 PORT: 8574
 DB_CONNECTION: mysql
@@ -89,5 +89,5 @@ DB_PORT: 3306
 DB_DATABASE: auth_users
 DB_USERNAME: root
 DB_PASSWORD: root
-AUTH_WEBSERVER_URL: http://localhost:80
-AUTH_GATEWAY_URL: http://kong:8001
+USERS_WEBSERVER_URL: http://users-service:80
+KONG_ADMIN_URL: http://kong-proxy:8001

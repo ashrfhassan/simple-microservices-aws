@@ -37,14 +37,14 @@ spec:
             - name: http
               containerPort: 8574
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 8574
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 8574
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
@@ -70,6 +70,7 @@ spec:
             value: {{ .Values.USERS_WEBSERVER_URL | quote }}
           - name: KONG_ADMIN_URL
             value: {{ .Values.KONG_ADMIN_URL | quote }}
+      terminationGracePeriodSeconds: 120
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

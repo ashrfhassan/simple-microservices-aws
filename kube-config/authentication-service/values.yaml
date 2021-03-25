@@ -21,7 +21,7 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: "ash"
+  name: ""
 
 podAnnotations: {}
 
@@ -41,7 +41,7 @@ service:
   port: 8574
 
 ingress:
-  enabled: true
+  enabled: false # used konga with kong db mode instead
   annotations:
     konghq.com/strip-path: "true"
     kubernetes.io/ingress.class: kong

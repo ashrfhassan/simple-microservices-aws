@@ -37,14 +37,14 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          # livenessProbe:
+          #   httpGet:
+          #     path: /socket.io
+          #     port: 3000
+          # readinessProbe:
+          #   httpGet:
+          #     path: /socket.io
+          #     port: 3000
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
@@ -60,6 +60,7 @@ spec:
             value: {{ .Values.RABBITMQ_DEFAULT_PASS | quote }}
           - name: RABBITMQ_URI
             value: {{ .Values.RABBITMQ_URI | quote }}
+      terminationGracePeriodSeconds: 120
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

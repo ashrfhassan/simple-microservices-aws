@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kong-proxy
+  namespace: default
+spec:
+  type: ExternalName
+  externalName: kong-proxy.kong.svc.cluster.local
+  ports:
+  - name: admin
+    port: 8001
+  - name: admin-ssl
+    port: 8444

@@ -39,12 +39,12 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /messages
+              port: 8585
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /messages
+              port: 8585
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
@@ -62,6 +62,7 @@ spec:
             value: {{ .Values.RABBITMQ_URI | quote }}
           - name: MONGODB_URI
             value: {{ .Values.MONGODB_URI | quote }}
+      terminationGracePeriodSeconds: 120
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

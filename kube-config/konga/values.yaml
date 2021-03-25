@@ -48,7 +48,7 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: 'ash-kube.com'
-      paths: [{path: '/konga'}]
+      paths: [{path: '/'}]
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

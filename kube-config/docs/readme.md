@@ -27,4 +27,7 @@ if you are using microk8s or minikube you will also allow to add inscure registr
 4- ingress controller kong db mode has kong inside of it and you can access admin apis through service in the cluster `http://kong-proxy:443` but kong-proxy only avalaible in the same namespace by default, in case if you want to access it from another namespace use the cluster-ip of the service instead of the name or even better by creating another service in the default namespace and refer to kong-proxy in the kong namespace to access it as shown here:
 ![access another namespace](access-another-namespace.PNG)
 
-5- kong ingress controller setup file has a postgres db in it but we are using external postgres db.
+5- as kong in a different namespace (kong) it won't be able to access other services from default namespace so when adding them host shouls be 
+({service-name}.default.svc.cluster.local) ![access another namespace(deafult)](referrencing-other-namespace-service.PNG)
+
+6- kong ingress controller setup file has a postgres db in it but we are using external postgres db.
